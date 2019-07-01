@@ -1,6 +1,7 @@
 import 'package:extended_text_library/src/special_text_span.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/painting.dart';
 import 'package:transparent_image/transparent_image.dart';
 import 'dart:ui' as ui show instantiateImageCodec, Codec;
 
@@ -220,7 +221,7 @@ class ImageSpanResolver {
     _updateSourceStream(newStream);
   }
 
-  void _handleImageChanged(ImageInfo imageInfo, bool synchronousCall) {
+  ImageStreamListener _handleImageChanged(ImageInfo imageInfo, bool synchronousCall) {
     //setState(() {
     _imageInfo = imageInfo;
     _listener?.call(imageInfo, synchronousCall);
@@ -243,13 +244,14 @@ class ImageSpanResolver {
 
   void _listenToStream() {
     if (_isListeningToStream) return;
-    _imageStream?.addListener(_handleImageChanged, onError: _failed);
+    _imageStream?.addListener(new ImageStreamListener(_handleImageChanged) as ImageStreamListener);
     _isListeningToStream = true;
   }
 
   void _stopListeningToStream() {
     if (!_isListeningToStream) return;
-    _imageStream?.removeListener(_handleImageChanged);
+    // _imageStream?.removeListener(_handleImageChanged);
+    _imageStream?.removeListener(new ImageStreamListener(_handleImageChanged) as ImageStreamListener);
     _isListeningToStream = false;
   }
 
